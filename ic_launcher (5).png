@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gift Shop Price Tool</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+font-family:Arial;
+background:#f3f3f3;
+padding:20px;
+margin:0;
+}
+
+.container{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+margin-bottom:60px;
+}
+
+input,button{
+padding:12px;
+font-size:18px;
+margin-top:10px;
+width:100%;
+box-sizing:border-box;
+}
+
+table{
+margin-top:20px;
+width:100%;
+border-collapse:collapse;
+}
+
+td,th{
+border:1px solid #ddd;
+padding:10px;
+text-align:center;
+}
+
+th{
+background:#333;
+color:white;
+}
+
+.code{
+font-size:22px;
+font-weight:bold;
+color:#d32f2f;
+margin-top:10px;
+}
+
+.home-link{
+display:block;
+margin-bottom:12px;
+color:#333;
+font-weight:bold;
+text-decoration:none;
+}
+
+.tabs{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+display:flex;
+}
+
+.tab{
+flex:1;
+padding:15px;
+text-align:center;
+background:#333;
+color:white;
+cursor:pointer;
+}
+
+.active{
+background:#d32f2f;
+}
+</style>
+</head>
+
+<body>
+
+<a class="home-link" href="index.html">‹ Home</a>
+
+<div class="container">
+
+<div id="tab1">
+<h2>Enter Purchase Price</h2>
+
+<input type="number" id="price" placeholder="Enter purchase price">
+
+<button onclick="calculate()">Calculate</button>
+
+<h3>Secret Code</h3>
+<div class="code" id="code"></div>
+
+<table>
+<tr>
+<th>Profit %</th>
+<th>Selling Price</th>
+</tr>
+<tbody id="results"></tbody>
+</table>
+</div>
+
+<div id="tab2" style="display:none">
+<h2>For PP (Decode Code)</h2>
+
+<input type="text" id="secretcode" placeholder="Enter secret code">
+
+<button onclick="decode()">Decode</button>
+
+<h3>Purchase Price</h3>
+<div class="code" id="pp"></div>
+</div>
+
+</div>
+
+<div class="tabs">
+<div class="tab active" onclick="showTab(1)">For SP</div>
+<div class="tab" onclick="showTab(2)">For PP</div>
+</div>
+
+<script>
+
+let map={
+0:'B',
+1:'L',
+2:'A',
+3:'C',
+4:'K',
+5:'H',
+6:'O',
+7:'R',
+8:'S',
+9:'E'
+};
+
+let reverse={};
+for(let k in map){
+reverse[map[k]]=k;
+}
+
+function getCode(price){
+let digits=price.toString().split('');
+let code="";
+digits.forEach(d=>{
+code+=map[d];
+});
+return code+"*";
+}
+
+function roundRetail(price){
+return Math.ceil(price/10)*10 -1;
+}
+
+function calculate(){
+
+let price=parseFloat(document.getElementById("price").value);
+
+if(!price){
+alert("Enter purchase price");
+return;
+}
+
+document.getElementById("code").innerText=getCode(price);
+
+let results="";
+
+for(let p=30;p<=90;p+=10){
+
+let sell=price*(1+p/100);
+sell=roundRetail(sell);
+
+results+=`
+<tr>
+<td>${p}%</td>
+<td>Rs ${sell}</td>
+</tr>
+`;
+
+}
+
+document.getElementById("results").innerHTML=results;
+}
+
+function decode(){
+
+let code=document.getElementById("secretcode").value.toUpperCase();
+code=code.replace(/[^A-Z]/g,'');
+
+let price="";
+
+for(let i=0;i<code.length;i++){
+price+=reverse[code[i]];
+}
+
+document.getElementById("pp").innerText=" "+price;
+}
+
+function showTab(tab){
+
+document.getElementById("tab1").style.display=tab==1?"block":"none";
+document.getElementById("tab2").style.display=tab==2?"block":"none";
+
+let tabs=document.querySelectorAll(".tab");
+
+tabs.forEach(t=>t.classList.remove("active"));
+
+tabs[tab-1].classList.add("active");
+}
+
+</script>
+
+</body>
+</html>
