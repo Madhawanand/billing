@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weight Price Calculator</title>
+
+<style>
+    *{
+        box-sizing:border-box;
+        font-family:Arial, sans-serif;
+    }
+
+    body{
+        background:#f4f6f9;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        min-height:100vh;
+        margin:0;
+        padding:16px;
+    }
+
+    .card{
+        background:white;
+        padding:30px;
+        border-radius:8px;
+        box-shadow:0 5px 15px rgba(0,0,0,0.1);
+        width:400px;
+        max-width:95%;
+    }
+
+    .home-link{
+        display:block;
+        margin-bottom:14px;
+        color:#333;
+        font-weight:bold;
+        text-decoration:none;
+    }
+
+    h2{
+        text-align:center;
+        margin-bottom:25px;
+        color:#333;
+    }
+
+    label{
+        font-weight:bold;
+        display:block;
+        margin-bottom:5px;
+    }
+
+    input{
+        width:100%;
+        padding:12px;
+        margin-bottom:15px;
+        border:1px solid #ccc;
+        border-radius:8px;
+        font-size:16px;
+    }
+
+    .hint{
+        color:#667085;
+        font-size:13px;
+        line-height:1.4;
+        margin:-8px 0 15px;
+    }
+
+    .actions{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+        margin-top:4px;
+    }
+
+    button{
+        width:100%;
+        padding:12px;
+        border:none;
+        border-radius:8px;
+        font-size:16px;
+        cursor:pointer;
+    }
+
+    .primary{
+        background:#28a745;
+        color:white;
+    }
+
+    .secondary{
+        background:#eef2f6;
+        color:#333;
+        border:1px solid #d5dbe3;
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <a class="home-link" href="index.html">&lt; Home</a>
+    <h2>Weight Price Calculator</h2>
+
+    <label>Rate per KG (Rs)</label>
+    <input type="number" id="rate" placeholder="Enter rate per kg" oninput="recalculate()">
+
+    <label>Selling Grams</label>
+    <input type="number" id="sellingGrams" placeholder="Enter grams to get selling price" oninput="calculateFromGrams()">
+
+    <label>Selling Price (Rs)</label>
+    <input type="number" id="sellingPrice" placeholder="Enter price to get grams" oninput="calculateFromPrice()">
+
+    <div class="hint">Enter either grams or selling price. The other field will be calculated from the KG rate.</div>
+
+    <div class="actions">
+        <button class="primary" onclick="recalculate()">Calculate</button>
+        <button class="secondary" onclick="clearFields()">Clear</button>
+    </div>
+</div>
+
+<script>
+let lastEdited = 'grams';
+
+function getRate() {
+    let rate = parseFloat(document.getElementById('rate').value) || 0;
+    if (!rate) {
+        return 0;
+    }
+    return rate;
+}
+
+function calculateFromGrams() {
+    lastEdited = 'grams';
+    let rate = getRate();
+    let grams = parseFloat(document.getElementById('sellingGrams').value) || 0;
+    let priceField = document.getElementById('sellingPrice');
+
+    if (!rate || !grams) {
+        priceField.value = '';
+        return;
+    }
+
+    let price = (rate / 1000) * grams;
+    priceField.value = price.toFixed(2);
+}
+
+function calculateFromPrice() {
+    lastEdited = 'price';
+    let rate = getRate();
+    let price = parseFloat(document.getElementById('sellingPrice').value) || 0;
+    let gramsField = document.getElementById('sellingGrams');
+
+    if (!rate || !price) {
+        gramsField.value = '';
+        return;
+    }
+
+    let grams = (price / rate) * 1000;
+    gramsField.value = grams.toFixed(2);
+}
+
+function recalculate() {
+    if (lastEdited === 'price') {
+        calculateFromPrice();
+    } else {
+        calculateFromGrams();
+    }
+}
+
+function clearFields() {
+    document.getElementById('sellingGrams').value = '';
+    document.getElementById('sellingPrice').value = '';
+    lastEdited = 'grams';
+}
+</script>
+
+</body>
+</html>
